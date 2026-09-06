@@ -1,0 +1,111 @@
+# =============================================================================
+# NEVER push secrets / personal data to GitHub
+# =============================================================================
+
+# --- Config with passwords, tokens, sheet IDs ---
+config.json
+*.local.json
+.env
+.env.*
+!.env.example
+
+# --- Runtime data (accounts, mails, SSO, logs) ---
+data/*
+!data/.gitkeep
+!data/README.md
+
+# Common secret filenames anywhere
+**/accounts.txt
+**/hotmails.txt
+**/hotmails_used.txt
+**/delivery_queue.json
+**/gsheet_last_payload.json
+**/vpn_by_email.json
+**/STOP
+**/*secret*
+**/*credential*
+**/*token*.json
+**/cookies*.txt
+**/sso*.txt
+**/sso*.json
+
+# Google service account / OAuth client dumps
+gsheets_service_account.json
+*service_account*.json
+*credentials*.json
+client_secret*.json
+token.json
+oauth*.json
+
+# Apps Script local state / one-shot dumps (may contain real URLs, emails, passwords)
+scripts/gsheets/clasp/setup_state.json
+gsheets_clasp/.clasp.json
+gsheets_clasp/setup_state.json
+scripts/gsheets/gsheets_push_once.gs
+scripts/gsheets/gsheets_push_simple.gs
+scripts/gsheets/**/setup_state.json
+scripts/gsheets/**/*_payload*.json
+**/*_push_once.gs
+**/*_push_simple.gs
+
+# --- Chrome profiles (cookies, login sessions) ---
+chrome_profile*/
+chrome_profile_*/
+chrome_stress*/
+chrome_runs*/
+
+# probe / test dumps
+account_test_results.json
+api_key_test_results.json
+*_test_results.json
+batch_live.out
+batch_live.err
+*.out
+*.err
+**/Default/Cookies
+**/Default/Login Data*
+**/Default/Web Data*
+
+# --- Python ---
+venv/
+.venv/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+dist/
+build/
+
+# --- Logs / captures / temp ---
+*.log
+logs/
+**/network_capture*.json
+**/last_run*.log
+**/last_xai_error.txt
+*.tmp
+*.bak
+*.swp
+*~
+
+# --- OS / IDE ---
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+*.code-workspace
+
+# --- Local overrides ---
+local/
+private/
+.secrets/
+data/sub2api_grok_free.key
+
+_root_modules_bak/
+*.monolith.bak
+
+scripts/gsheets/clasp/.clasp.json

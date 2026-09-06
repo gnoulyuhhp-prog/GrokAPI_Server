@@ -1,0 +1,158 @@
+services:
+  sub2api:
+    build:
+      # The VPS network cannot reliably reach Alpine package repositories.
+      # Build the static custom binary first, then overlay it on the upstream
+      # runtime image without changing application logic.
+      context: .
+      dockerfile: Dockerfile.prebuilt
+    image: sub2api-custom:local
+    container_name: sub2api
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    ports:
+      # Private host-only endpoint for the GrokReg importer on this VPS.
+      - "127.0.0.1:8080:8080"
+    volumes:
+      - sub2api_data:/app/data
+    environment:
+      AUTO_SETUP: "true"
+      SERVER_HOST: 0.0.0.0
+      SERVER_PORT: "8080"
+      SERVER_MODE: release
+      SERVER_FRONTEND_URL: https://grokapi.vorte.me
+      # Only the dedicated Caddy container may supply client-IP headers.
+      SERVER_TRUSTED_PROXIES: 172.30.0.2/32
+      SECURITY_TRUST_FORWARDED_IP_FOR_API_KEY_ACL: "false"
+      RUN_MODE: standard
+      TZ: Asia/Ho_Chi_Minh
+      DATABASE_HOST: postgres
+      DATABASE_PORT: "5432"
+      DATABASE_USER: sub2api
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+      DATABASE_DBNAME: sub2api
+      DATABASE_SSLMODE: disable
+      DATABASE_MAX_OPEN_CONNS: "15"
+      DATABASE_MAX_IDLE_CONNS: "5"
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+      REDIS_PASSWORD: ${REDIS_PASSWORD:?REDIS_PASSWORD is required}
+      REDIS_POOL_SIZE: "20"
+      REDIS_MIN_IDLE_CONNS: "2"
+      ADMIN_EMAIL: ${ADMIN_EMAIL:?ADMIN_EMAIL is required}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?ADMIN_PASSWORD is required}
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
+      TOTP_ENCRYPTION_KEY: ${TOTP_ENCRYPTION_KEY:?TOTP_ENCRYPTION_KEY is required}
+      GATEWAY_GROK_PASSWORD_AUTH_ENABLED: "true"
+      YESCAPTCHA_CLIENT_KEY: ${YESCAPTCHA_CLIENT_KEY:-}
+      SUB2API_SALES_SECRET: ${SUB2API_SALES_SECRET:-}
+      SUB2API_SALES_ALLOWED_CIDRS: ${SUB2API_SALES_ALLOWED_CIDRS:-}
+      SUB2API_GROK_TOKENS_PER_ACTIVE_ACCOUNT: ${SUB2API_GROK_TOKENS_PER_ACTIVE_ACCOUNT:-50000}
+      SUB2API_GROK_TOKENS_PER_QUOTA_USD: ${SUB2API_GROK_TOKENS_PER_QUOTA_USD:-500000}
+      GOMEMLIMIT: 1400MiB
+    mem_limit: 1536m
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-T", "5", "-O", "/dev/null", "http://localhost:8080/health"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      edge:
+        ipv4_address: 172.30.0.3
+      backend:
+
+  caddy:
+    image: caddy:2-alpine
+    container_name: sub2api-caddy
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+      - caddy_logs:/var/log/caddy
+    mem_limit: 256m
+    depends_on:
+      sub2api:
+        condition: service_healthy
+    networks:
+      edge:
+        ipv4_address: 172.30.0.2
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: sub2api-postgres
+    restart: unless-stopped
+    command:
+      - postgres
+      - -c
+      - max_connections=30
+      - -c
+      - shared_buffers=32MB
+      - -c
+      - effective_cache_size=128MB
+      - -c
+      - maintenance_work_mem=16MB
+      - -c
+      - work_mem=2MB
+    environment:
+      POSTGRES_USER: sub2api
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+      POSTGRES_DB: sub2api
+      TZ: Asia/Ho_Chi_Minh
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    mem_limit: 768m
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sub2api -d sub2api"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks:
+      - backend
+
+  redis:
+    image: redis:8-alpine
+    container_name: sub2api-redis
+    restart: unless-stopped
+    command: ["sh", "-c", "exec redis-server --appendonly yes --appendfsync everysec --requirepass \"$$REDIS_PASSWORD\""]
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:?REDIS_PASSWORD is required}
+    volumes:
+      - redis_data:/data
+    mem_limit: 768m
+    healthcheck:
+      test: ["CMD-SHELL", "REDISCLI_AUTH=\"$$REDIS_PASSWORD\" redis-cli ping | grep -q PONG"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks:
+      - backend
+
+volumes:
+  sub2api_data:
+  postgres_data:
+  redis_data:
+  caddy_data:
+  caddy_config:
+  caddy_logs:
+
+networks:
+  edge:
+    ipam:
+      config:
+        - subnet: 172.30.0.0/24
+  backend:
+    internal: true

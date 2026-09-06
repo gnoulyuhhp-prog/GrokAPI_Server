@@ -1,0 +1,81 @@
+{
+    servers {
+        max_header_size 64KB
+        timeouts {
+            read_header 10s
+            idle 2m
+        }
+    }
+}
+
+http://103.238.235.241 {
+    redir https://grokapi.vorte.me{uri} permanent
+}
+
+grokapi.vorte.me {
+    tls {
+        protocols tls1.2 tls1.3
+    }
+
+    encode {
+        zstd
+        gzip 6
+        minimum_length 256
+        match {
+            # Do not compress text/event-stream: buffering would break SSE.
+            header Content-Type text/css*
+            header Content-Type text/html*
+            header Content-Type text/javascript*
+            header Content-Type text/plain*
+            header Content-Type application/json*
+            header Content-Type application/javascript*
+            header Content-Type application/xml*
+            header Content-Type image/svg+xml*
+        }
+    }
+
+    header {
+        X-Content-Type-Options nosniff
+        Referrer-Policy strict-origin-when-cross-origin
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+        -Server
+    }
+
+    request_body {
+        max_size 256MB
+    }
+
+    @grokreg_portal path /check* /balance* /api/check-key* /setup-windows* /setup-codex-windows* /api/v1/setup-codex-windows* /setup-linux* /setup-codex-linux* /api/v1/setup-codex-linux* /setup-mac*
+    handle @grokreg_portal {
+        reverse_proxy 172.30.0.1:8082
+    }
+
+    handle {
+        reverse_proxy sub2api:8080 {
+            health_uri /health
+            health_interval 30s
+            health_timeout 10s
+
+            # Caddy is the only public entry point and overwrites spoofable headers.
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
+            header_up X-Forwarded-Host {host}
+
+            transport http {
+                keepalive 120s
+                keepalive_idle_conns 256
+                compression off
+            }
+        }
+    }
+
+    log {
+        output file /var/log/caddy/sub2api.log {
+            roll_size 50mb
+            roll_keep 10
+            roll_keep_for 720h
+        }
+        format json
+    }
+}

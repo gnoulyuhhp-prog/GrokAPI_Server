@@ -1,0 +1,7 @@
+FROM weishaw/sub2api:latest
+
+USER root
+COPY --chown=sub2api:sub2api sub2api /app/sub2api
+RUN chmod 0755 /app/sub2api && \
+    grep -q '<!doctype html>' /app/sub2api || \
+    (echo 'prebuilt sub2api binary is missing embedded frontend; rebuild with: go build -tags embed ./cmd/server' >&2; exit 1)

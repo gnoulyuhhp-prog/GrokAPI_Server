@@ -1,0 +1,60 @@
+grokapi.vorte.me {
+    encode zstd gzip
+
+    header {
+        X-Content-Type-Options nosniff
+        Referrer-Policy strict-origin-when-cross-origin
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+        -Server
+    }
+
+    handle /check* {
+        reverse_proxy 172.30.0.1:8082
+    }
+
+    handle /balance* {
+        reverse_proxy 172.30.0.1:8082
+    }
+
+    handle /api/check-key* {
+        reverse_proxy 172.30.0.1:8082
+    }
+
+    handle /setup-windows* {
+        reverse_proxy 172.30.0.1:8082
+    }
+
+    handle /setup-codex-windows* {
+        reverse_proxy 172.30.0.1:8082
+    }
+
+    handle /api/v1/setup-codex-windows* {
+        reverse_proxy 172.30.0.1:8082
+    }
+
+    handle /setup-linux* {
+        reverse_proxy 172.30.0.1:8082
+    }
+
+    handle /setup-codex-linux* {
+        reverse_proxy 172.30.0.1:8082
+    }
+
+    handle /api/v1/setup-codex-linux* {
+        reverse_proxy 172.30.0.1:8082
+    }
+
+    handle /setup-mac* {
+        reverse_proxy 172.30.0.1:8082
+    }
+
+    handle {
+        reverse_proxy sub2api:8080 {
+            flush_interval -1
+            transport http {
+                keepalive 300s
+                keepalive_idle_conns 256
+            }
+        }
+    }
+}

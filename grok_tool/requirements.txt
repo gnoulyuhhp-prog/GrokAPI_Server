@@ -1,0 +1,23 @@
+pydoll-python
+requests
+aiohttp
+python-dotenv
+colorama
+
+gspread
+google-auth
+requests
+
+# Web control plane
+fastapi
+uvicorn[standard]
+
+# Optional: Camoufox Turnstile solver (CHAY_SOLVER.bat)
+# camoufox[geoip]
+# quart
+# patchright
+# rich
+
+# Protocol HTTP path (competitor-style)
+curl_cffi
+

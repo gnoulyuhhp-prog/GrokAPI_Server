@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="surface" x1="10" y1="8" x2="54" y2="58" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F8FAFF"/>
+      <stop offset="1" stop-color="#E8F0FF"/>
+    </linearGradient>
+    <linearGradient id="ribbon" x1="15" y1="17" x2="50" y2="48" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#60A5FA"/>
+      <stop offset="0.48" stop-color="#2563EB"/>
+      <stop offset="1" stop-color="#1D4ED8"/>
+    </linearGradient>
+    <filter id="shadow" x="8" y="10" width="48" height="46" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#1D4ED8" flood-opacity="0.18"/>
+    </filter>
+  </defs>
+  <rect x="2" y="2" width="60" height="60" rx="18" fill="url(#surface)"/>
+  <rect x="2.5" y="2.5" width="59" height="59" rx="17.5" stroke="#2563EB" stroke-opacity="0.10"/>
+  <g filter="url(#shadow)">
+    <path d="M16 45V21.25c0-3.76 4.62-5.56 7.17-2.8L41 37.76V19h7v23.75c0 3.76-4.62 5.56-7.17 2.8L23 26.24V45h-7Z" fill="url(#ribbon)"/>
+    <path d="M23 26.24 41 45.55c2.55 2.76 7.17.96 7.17-2.8v-3.5L29.2 18.7a4 4 0 0 0-6.2 3.2v4.34Z" fill="#1E40AF" fill-opacity="0.24"/>
+  </g>
+  <circle cx="19.5" cy="19.5" r="3.5" fill="#fff" stroke="#2563EB" stroke-width="2"/>
+  <circle cx="44.5" cy="44.5" r="3.5" fill="#2563EB" stroke="#fff" stroke-width="2"/>
+</svg>

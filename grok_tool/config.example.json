@@ -1,0 +1,146 @@
+{
+  "email_provider": "auto_temp",
+  "temp_mail_order": ["azpopmail", "tmail_wibu"],
+  "hotmail_list": "data/hotmails.txt",
+  "hotmail_max_aliases": 5,
+  "proxy": "",
+  "headless": false,
+  "timeout_otp": 240,
+  "password_length": 16,
+  "fixed_password": "CHANGE_ME_strong_password",
+  "fixed_first_name": "",
+  "fixed_last_name": "",
+  "save_file": "data/accounts.txt",
+  "fresh_profile_per_account": false,
+  "reuse_chrome_profile": true,
+  "chrome_user_data_dir": "chrome_profile_v3",
+  "chrome_debug_port": 9333,
+  "keep_browser_open": false,
+  "force_guest_on_start": true,
+  "humanize": true,
+  "human_delay_min": 2.0,
+  "human_delay_max": 5.5,
+  "inter_success_delay_min": 45,
+  "inter_success_delay_max": 90,
+  "mail_fail_cooldown_min": 120,
+  "cf_max_retries": 2,
+  "cf_wait_sec": 40,
+  "turnstile_before_email_sec": 18,
+  "email_autofix_retries": 2,
+  "email_autofix_on_generic": 1,
+  "post_cf_stealth_mode": "minimal",
+  "chrome_pull_back_after_cf": false,
+  "chrome_pull_back_after_otp": false,
+  "castle_warmup_sec": 12,
+  "castle_wait_token_sec": 28,
+  "castle_retry_on_mint_fail": 1,
+  "batch_count": 1,
+  "rate_limit_cooldown_min": 55,
+  "open_grok_after_success": true,
+  "grok_url": "https://grok.com/",
+  "antiflag": {
+    "enabled": true,
+    "clear_cookies_on_start": true,
+    "clear_storage_on_start": true,
+    "stealth_inject": false,
+    "post_cf_stealth_mode": "minimal",
+    "force_ua": false,
+    "human_typing": true,
+    "pre_click_jiggle": true,
+    "minimal_fingerprint": true,
+    "isolate_profile": false,
+    "align_tz_to_ip": true,
+    "hide_webdriver": true,
+    "browser_preferences": true
+  },
+  "azpopmail": {
+    "base_url": "https://azpopmail.com",
+    "token": "",
+    "verify_ssl": false,
+    "domains": [],
+    "poll_interval": 3
+  },
+  "tmail_wibu": {
+    "base_url": "https://tmail.wibucrypto.pro",
+    "verify_ssl": true,
+    "create_mode": "create",
+    "poll_interval": 3,
+    "domains": []
+  },
+  "tinyhost": {
+    "base_url": "https://tinyhost.shop"
+  },
+  "tempmail_lol": {
+    "api_key": ""
+  },
+  "tempmail_vip": {
+    "api_key": ""
+  },
+  "save_storage_state": true,
+  "sub2api": {
+    "enabled": true,
+    "mode": "auto",
+    "sub2api_url": "http://localhost:8080",
+    "sub2api_user": "YOUR_SUB2API_EMAIL",
+    "sub2api_pass": "YOUR_SUB2API_PASSWORD",
+    "sub2api_api_token": "",
+    "name_prefix": "grok free",
+    "start_number": 1,
+    "group": "grok free",
+    "group_ids": [],
+    "name_include_email": true,
+    "refresh_usage_after_import": true,
+    "usage_refresh_sec": 20,
+    "model_test": "Grok 4.5",
+    "timeout_oauth_sec": 180,
+    "timeout_sec": 180,
+    "timeout_test_sec": 45,
+    "run_test": false,
+    "fallback_browser_oauth": true,
+    "durable_retry": true,
+    "durable_interval_sec": 60
+  },
+  "mail_api": {
+    "enabled": true,
+    "client_id": "YOUR_MS_CLIENT_ID_OR_LEAVE_EMPTY",
+    "poll_interval": 4,
+    "timeout": 180,
+    "otp_regex": "([A-Z0-9]{2,5}-[A-Z0-9]{2,5})",
+    "providers": [
+      {
+        "name": "email_inbox_receiver",
+        "enabled": true,
+        "base_url": "https://example.com",
+        "auth_mode": "graph",
+        "max_messages": 20
+      },
+      { "name": "ms_graph", "enabled": true },
+      { "name": "mailgen", "enabled": false, "base_url": "" }
+    ]
+  },
+  "google_sheets": {
+    "enabled": false,
+    "spreadsheet_id": "",
+    "gid": 0,
+    "webapp_url": "",
+    "webapp_secret": "",
+    "credentials_file": "gsheets_service_account.json",
+    "mode": "replace_night",
+    "write_txt_backup": true,
+    "push_max_attempts": 3,
+    "require_sheet_success": false
+  },
+  "chrome_background": false,
+  "chrome_window_mode": "lygaz",
+  "chrome_window_position": "80,40",
+  "chrome_pull_back_after_done": false,
+  "allow_login_fallback": true,
+  "turnstile": {
+    "mode": "auto",
+    "solver_url": "http://127.0.0.1:5072",
+    "yescaptcha_key": "",
+    "timeout_sec": 90,
+    "sitekey": ""
+  }
+}
+
